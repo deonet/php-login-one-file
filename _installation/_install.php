@@ -31,7 +31,7 @@ $query->execute();
 
 // check for success
 if (file_exists($db_sqlite_path)) {
-    echo "Database $db_sqlite_path was created, installation was successful.";
+    echo"[CREATE TABLE IF NOT EXISTS]<br>";echo "Database $db_sqlite_path was created, installation was successful.";
 } else {
     echo "Database $db_sqlite_path was not created, installation was NOT successful. Missing folder write rights ?";
 }
