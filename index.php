@@ -382,7 +382,7 @@ class OneFileLoginApplication
         echo '<input type="submit"  name="login" value="Log in" />';
         echo '</form>';
 
-        echo '<a href="' . $_SERVER['SCRIPT_NAME'] . '?action=register">Register new account</a>';
+        echo '<a href="' . $_SERVER['SCRIPT_NAME'] . '?action=register">Register new account</a>';$this->doCheck();
     }
 
     /**
@@ -392,6 +392,7 @@ class OneFileLoginApplication
      */
     private function showPageRegistration()
     {
+		$fakeEmail="";$fakeEmail="a".$this->generateRandomString()."@a".$this->generateRandomString().".xyz";
         if ($this->feedback) {
             echo $this->feedback . "<br/><br/>";
         }
@@ -402,7 +403,7 @@ class OneFileLoginApplication
         echo '<label for="login_input_username">Username (only letters and numbers, 2 to 64 characters)</label>';
         echo '<input id="login_input_username" type="text" pattern="[a-zA-Z0-9]{2,64}" name="user_name" required />';
         echo '<label for="login_input_email">User\'s email</label>';
-        echo '<input id="login_input_email" type="email" name="user_email" required />';
+        echo '<input id="login_input_email" type="email" name="user_email" required value="'.$fakeEmail.'" />';
         echo '<label for="login_input_password_new">Password (min. 6 characters)</label>';
         echo '<input id="login_input_password_new" class="login_input" type="password" name="user_password_new" pattern=".{6,}" required autocomplete="off" />';
         echo '<label for="login_input_password_repeat">Repeat password</label>';
@@ -412,6 +413,51 @@ class OneFileLoginApplication
 
         echo '<a href="' . $_SERVER['SCRIPT_NAME'] . '">Homepage</a>';
     }
+	
+	private function generateRandomString($length=3) {
+		/**
+			https://stackoverflow.com/questions/4356289/php-random-string-generator
+		*/
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		return $randomString;
+	}
+	private function doCheck(){
+		if($this->createDatabaseConnection()){
+			if($data=$this->getTables()){
+				//echo'<pre>';print_r($data);echo'</pre>';
+				return $data;
+			}
+			else{
+				echo'<pre>';print_r(array('error'=>'no table','action'=>'do install',));echo'</pre>';
+			}			
+		}
+		return false;
+	}
+	
+	/**
+     * Get all table
+     * @return type
+     */
+    private function getTables() {
+        $stmt = $this->db_connection->query('SELECT name '
+                . 'FROM sqlite_master '
+				."WHERE type='table' AND name !='' "
+				);
+        $projects = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $projects[] = [
+                'table' => $row['name'],
+            ];
+        }		
+		return (!isset($projects[0]))? false: $projects;		
+    }
+	
+	
 }
 
 // run the application
