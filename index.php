@@ -16,7 +16,7 @@ class OneFileLoginApplication
     /**
      * @var string Type of used database (currently only SQLite, but feel free to expand this with mysql etc)
      */
-    private $db_type = "sqlite"; //
+    private $db_type = "sqlite"; // asasas
 
     /**
      * @var string Path of the database file (create this with _install.php)
